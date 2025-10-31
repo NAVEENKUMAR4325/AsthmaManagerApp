@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#2D7A7F</color>
+    <color name="primaryDarkColor">#205559</color>
+    <color name="accentColor">#4DB6AC</color>
+    <color name="fieldBackgroundColor">#E0F2F1</color>
+    <color name="fieldTextColor">#333333</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="cardLightBackgroundColor">#334DB6AC</color>
+</resources>

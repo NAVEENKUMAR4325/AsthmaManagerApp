@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <!-- Splash Screen -->
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.asthmamanager.SplashFragment"
+        android:label="Splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Login Screen -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.asthmamanager.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeDashboardFragment"
+            app:destination="@id/homeDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginFragment_to_doctorDashboardFragment"
+            app:destination="@id/doctorDashboardFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Signup Screen -->
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.asthmamanager.SignupFragment"
+        android:label="Sign Up"
+        tools:layout="@layout/fragment_signup">
+        <action
+            android:id="@+id/action_signupFragment_to_patientDetailsFragment"
+            app:destination="@id/patientDetailsFragment"
+            app:popUpTo="@id/signupFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signupFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <!-- Forgot Password -->
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.asthmamanager.ForgotPasswordFragment"
+        android:label="Forgot Password"
+        tools:layout="@layout/fragment_forgot_password">
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/forgotPasswordFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
+    </fragment>
+
+    <!-- Reset Password -->
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.example.asthmamanager.ResetPasswordFragment"
+        android:label="Reset Password"
+        tools:layout="@layout/fragment_reset_password">
+        <action
+            android:id="@+id/action_resetPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/resetPasswordFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Patient Details -->
+    <fragment
+        android:id="@+id/patientDetailsFragment"
+        android:name="com.example.asthmamanager.PatientDetailsFragment"
+        android:label="Patient Details"
+        tools:layout="@layout/fragment_patient_details">
+        <action
+            android:id="@+id/action_patientDetailsFragment_to_homeDashboardFragment"
+            app:destination="@id/homeDashboardFragment"
+            app:popUpTo="@id/patientDetailsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Home Dashboard -->
+    <fragment
+        android:id="@+id/homeDashboardFragment"
+        android:name="com.example.asthmamanager.HomeDashboardFragment"
+        android:label="Home Dashboard"
+        tools:layout="@layout/fragment_home_dashboard">
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_PEFRInputFragment"
+            app:destination="@id/PEFRInputFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_graphFragment"
+            app:destination="@id/graphFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_alertsFragment"
+            app:destination="@id/alertsFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_reportsFragment"
+            app:destination="@id/reportsFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_symptomTrackerFragment"
+            app:destination="@id/symptomTrackerFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_treatmentPlanFragment"
+            app:destination="@id/treatmentPlanFragment" />
+        <action
+            android:id="@+id/action_homeDashboardFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+    </fragment>
+
+    <!-- Doctor Dashboard -->
+    <fragment
+        android:id="@+id/doctorDashboardFragment"
+        android:name="com.example.asthmamanager.DoctorDashboardFragment"
+        android:label="Doctor Dashboard"
+        tools:layout="@layout/fragment_doctor_dashboard">
+        <action
+            android:id="@+id/action_doctorDashboardFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_doctorDashboardFragment_to_graphFragment"
+            app:destination="@id/graphFragment" />
+        <action
+            android:id="@+id/action_doctorDashboardFragment_to_reportsFragment"
+            app:destination="@id/reportsFragment" />
+    </fragment>
+
+    <!-- Profile -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.asthmamanager.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Shared Fragments -->
+    <fragment
+        android:id="@+id/PEFRInputFragment"
+        android:name="com.example.asthmamanager.PEFRInputFragment"
+        android:label="PEFR Input"
+        tools:layout="@layout/fragment_pefr_input" />
+
+    <fragment
+        android:id="@+id/graphFragment"
+        android:name="com.example.asthmamanager.GraphFragment"
+        android:label="Graph"
+        tools:layout="@layout/fragment_graph" />
+
+    <fragment
+        android:id="@+id/symptomTrackerFragment"
+        android:name="com.example.asthmamanager.SymptomTrackerFragment"
+        android:label="Symptom Tracker"
+        tools:layout="@layout/fragment_symptom_tracker" />
+
+    <fragment
+        android:id="@+id/treatmentPlanFragment"
+        android:name="com.example.asthmamanager.TreatmentPlanFragment"
+        android:label="Treatment Plan"
+        tools:layout="@layout/fragment_treatment_plan" />
+
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.example.asthmamanager.AlertsFragment"
+        android:label="Alerts"
+        tools:layout="@layout/fragment_alerts" />
+
+    <fragment
+        android:id="@+id/reportsFragment"
+        android:name="com.example.asthmamanager.ReportsFragment"
+        android:label="Reports"
+        tools:layout="@layout/fragment_reports" />
+
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.example.asthmamanager.NotificationFragment"
+        android:label="Notification"
+        tools:layout="@layout/fragment_notification" />
+
+</navigation>
