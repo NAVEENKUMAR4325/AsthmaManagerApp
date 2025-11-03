@@ -94,6 +94,9 @@ class User(UserBase):
     emergency_contacts: List[EmergencyContact] = []
     reminders: List[Reminder] = []
     
+    # --- THIS IS THE FIX ---
+    baseline: Optional["BaselinePEFR"] = None
+
     class Config(ConfigBase):
         pass
 
@@ -175,3 +178,7 @@ class Symptom(SymptomCreate):
 
     class Config(ConfigBase):
         pass
+
+# --- THIS IS THE FIX ---
+# This line allows the User schema to find the BaselinePEFR schema
+User.update_forward_refs()
