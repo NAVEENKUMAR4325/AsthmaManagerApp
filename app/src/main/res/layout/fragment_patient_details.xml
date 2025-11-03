@@ -115,48 +115,56 @@
         app:layout_constraintTop_toBottomOf="@id/labelHeight" />
 
     <TextView
-        android:id="@+id/labelBaselinePefr"
+        android:id="@+id/labelGender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Baseline PEFR"
+        android:layout_marginTop="16dp"
+        android:text="Gender"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@id/labelName"
         app:layout_constraintTop_toBottomOf="@id/editTextHeight" />
 
-    <LinearLayout
-        android:id="@+id/pefrBar"
+    <EditText
+        android:id="@+id/editTextGender"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        android:weightSum="10"
+        android:background="@drawable/input_field_background"
+        android:hint="Enter your gender"
+        android:inputType="text"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/fieldTextColor"
         app:layout_constraintEnd_toEndOf="@id/editTextName"
         app:layout_constraintStart_toStartOf="@id/editTextName"
-        app:layout_constraintTop_toBottomOf="@id/labelBaselinePefr">
+        app:layout_constraintTop_toBottomOf="@id/labelGender" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            android:background="#66BB6A" /> <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:background="#FFEE58" /> <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:background="#EF5350" /> </LinearLayout>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/pefrToggle"
+    <TextView
+        android:id="@+id/labelBaselinePefr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/pefrBar"
-        app:layout_constraintTop_toBottomOf="@id/pefrBar"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:text="Baseline PEFR"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@id/labelName"
+        app:layout_constraintTop_toBottomOf="@id/editTextGender" />
+
+    <EditText
+        android:id="@+id/editTextBaselinePefr"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/input_field_background"
+        android:hint="Enter your baseline PEFR"
+        android:inputType="number"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/fieldTextColor"
+        app:layout_constraintEnd_toEndOf="@id/editTextName"
+        app:layout_constraintStart_toStartOf="@id/editTextName"
+        app:layout_constraintTop_toBottomOf="@id/labelBaselinePefr" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonNext"

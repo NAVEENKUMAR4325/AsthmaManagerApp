@@ -17,17 +17,30 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="100dp"> <TextView
-            android:id="@+id/textViewHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:text="Asthma\nPEFR Tracker"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:paddingBottom="100dp">
+
+            <ImageView
+                android:id="@+id/imageAppIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/ic_launcher_foreground"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Asthma
+PEFR Tracker"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintStart_toEndOf="@id/imageAppIcon"
+                app:layout_constraintTop_toTopOf="@id/imageAppIcon"
+                app:layout_constraintBottom_toBottomOf="@id/imageAppIcon" />
 
             <ImageView
                 android:id="@+id/imageProfile"
@@ -52,7 +65,7 @@
                 android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/textViewHeader"
+                app:layout_constraintStart_toStartOf="@id/imageAppIcon"
                 app:layout_constraintTop_toBottomOf="@id/textViewHeader" />
 
             <com.google.android.material.card.MaterialCardView
@@ -64,7 +77,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="@id/imageProfile"
-                app:layout_constraintStart_toStartOf="@id/textViewHeader"
+                app:layout_constraintStart_toStartOf="@id/imageAppIcon"
                 app:layout_constraintTop_toBottomOf="@id/textViewTitle">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -119,7 +132,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="@id/imageProfile"
-                app:layout_constraintStart_toStartOf="@id/textViewHeader"
+                app:layout_constraintStart_toStartOf="@id/imageAppIcon"
                 app:layout_constraintTop_toBottomOf="@id/cardGraph">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -171,78 +184,75 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="@id/imageProfile"
-                app:layout_constraintStart_toStartOf="@id/textViewHeader"
+                app:layout_constraintStart_toStartOf="@id/imageAppIcon"
                 app:layout_constraintTop_toBottomOf="@id/cardTodayZone">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:padding="24dp">
 
                     <TextView
-                        android:id="@+id/labelSymptoms"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Asthma Symptoms"
                         android:textColor="@color/white"
-                        android:textSize="18sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="18sp"/>
 
-                    <TextView
-                        android:id="@+id/textSymptomPlaceholder"
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchWheeze"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="[Symptom Icons Placeholder]"
-                        android:textColor="@color/accentColor"
-                        android:textSize="14sp"
-                        android:gravity="center"
-                        app:layout_constraintTop_toBottomOf="@id/labelSymptoms"/>
-
-                    <TextView
-                        android:id="@+id/labelDust"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dust"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:layout_marginTop="24dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textSymptomPlaceholder"
-                        app:layout_constraintBottom_toBottomOf="@id/toggleDust"/>
+                        android:text="Wheeze"
+                        android:textColor="@color/white"/>
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/toggleDust"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/switchCough"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/labelDust"
-                        app:thumbTint="@color/accentColor"
-                        app:trackTint="@color/fieldBackgroundColor"/>
+                        android:text="Cough"
+                        android:textColor="@color/white"/>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchDysnea"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dysnea"
+                        android:textColor="@color/white"/>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchNightSymptoms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Night Symptoms"
+                        android:textColor="@color/white"/>
 
                     <TextView
-                        android:id="@+id/labelSmoke"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Allergen Exposure"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"/>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchDust"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Dust"
+                        android:textColor="@color/white"/>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchSmoke"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Smoke"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/toggleDust"
-                        app:layout_constraintBottom_toBottomOf="@id/toggleSmoke"/>
+                        android:textColor="@color/white"/>
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/toggleSmoke"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/labelSmoke"
-                        app:thumbTint="@color/accentColor"
-                        app:trackTint="@color/fieldBackgroundColor"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton

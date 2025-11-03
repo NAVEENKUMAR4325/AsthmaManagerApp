@@ -5,12 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.asthmamanager.databinding.FragmentHomeDashboardBinding
+import com.example.asthmamanager.network.RetrofitClient
+import com.example.asthmamanager.network.SymptomCreate
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeDashboardFragment : Fragment() {
 
@@ -54,6 +61,28 @@ class HomeDashboardFragment : Fragment() {
                 }
             }
         }
+
+        // Set up the treatment notification
+        updateTreatmentNotification(450)
+
+        // Fetch user profile
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.getMyProfile()
+                }
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        binding.textViewHeader.text = "Welcome, ${it.fullName}"
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+
+        // Log symptoms
+        logSymptoms()
     }
 
     private fun setupChart() {
@@ -139,6 +168,58 @@ class HomeDashboardFragment : Fragment() {
             Entry(29f, 460f),
             Entry(30f, 450f)
         )
+    }
+
+    private fun updateTreatmentNotification(pefrValue: Int) {
+        val zone = getPEFRZone(pefrValue)
+        val advice = when (zone) {
+            "Green Zone" -> "Continue the inhaler - Controller"
+            "Yellow Zone" -> "Step up dose / Use reliever"
+            "Red Zone" -> "Emergency hospital visit"
+            else -> ""
+        }
+        binding.textZoneGuidance.text = advice
+    }
+
+    private fun getPEFRZone(pefrValue: Int): String {
+        // This is a simplified example. In a real app, you would have a more robust way to determine the zone.
+        return when {
+            pefrValue >= 400 -> "Green Zone"
+            pefrValue >= 250 -> "Yellow Zone"
+            else -> "Red Zone"
+        }
+    }
+
+    private fun logSymptoms() {
+        val wheezeRating = if (binding.switchWheeze.isChecked) 1 else 0
+        val coughRating = if (binding.switchCough.isChecked) 1 else 0
+        val dyspneaRating = if (binding.switchDysnea.isChecked) 1 else 0
+        val nightSymptomsRating = if (binding.switchNightSymptoms.isChecked) 1 else 0
+        val dustExposure = binding.switchDust.isChecked
+        val smokeExposure = binding.switchSmoke.isChecked
+
+        val symptomRequest = SymptomCreate(
+            wheezeRating = wheezeRating,
+            coughRating = coughRating,
+            dyspneaRating = dyspneaRating,
+            nightSymptomsRating = nightSymptomsRating,
+            dustExposure = dustExposure,
+            smokeExposure = smokeExposure,
+            severity = null,
+            onsetAt = null,
+            duration = null,
+            suspectedTrigger = null
+        )
+
+        lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.recordSymptom(symptomRequest)
+                }
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
     }
 
     override fun onDestroyView() {

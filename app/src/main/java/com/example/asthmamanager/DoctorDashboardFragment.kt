@@ -4,10 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.asthmamanager.databinding.FragmentDoctorDashboardBinding
+import com.example.asthmamanager.network.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DoctorDashboardFragment : Fragment() {
 
@@ -35,25 +41,30 @@ class DoctorDashboardFragment : Fragment() {
             findNavController().navigate(DoctorDashboardFragmentDirections.actionDoctorDashboardFragmentToProfileFragment())
         }
 
-        // Set up the RecyclerView
-        val patients = createSamplePatients()
-        val adapter = PatientAdapter(patients, {
-            // On patient clicked
-            findNavController().navigate(DoctorDashboardFragmentDirections.actionDoctorDashboardFragmentToGraphFragment())
-        }, {
-            // On download clicked
-            findNavController().navigate(DoctorDashboardFragmentDirections.actionDoctorDashboardFragmentToReportsFragment())
-        })
-        binding.recyclerViewPatients.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewPatients.adapter = adapter
-    }
-
-    private fun createSamplePatients(): List<Patient> {
-        return listOf(
-            Patient("John Doe", "Red Zone", 250, "High (8/10)"),
-            Patient("Jane Smith", "Yellow Zone", 450, "Medium (5/10)"),
-            Patient("Peter Jones", "Green Zone", 600, "Low (2/10)")
-        )
+        // Fetch patients
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.getDoctorPatients(null, null)
+                }
+                if (response.isSuccessful) {
+                    val patients = response.body() ?: emptyList()
+                    val adapter = PatientAdapter(patients, {
+                        // On patient clicked
+                        findNavController().navigate(DoctorDashboardFragmentDirections.actionDoctorDashboardFragmentToGraphFragment())
+                    }, {
+                        // On download clicked
+                        findNavController().navigate(DoctorDashboardFragmentDirections.actionDoctorDashboardFragmentToReportsFragment())
+                    })
+                    binding.recyclerViewPatients.layoutManager = LinearLayoutManager(requireContext())
+                    binding.recyclerViewPatients.adapter = adapter
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load patients", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroyView() {

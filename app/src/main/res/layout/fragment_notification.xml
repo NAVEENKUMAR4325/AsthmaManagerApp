@@ -23,7 +23,7 @@
         android:id="@+id/cardReminder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android.layout_marginStart="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="32dp"
         app:cardCornerRadius="16dp"
@@ -77,9 +77,51 @@
                 android:textColor="@color/fieldTextColor"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/labelTime"
                 app:layout_constraintBottom_toBottomOf="@id/labelTime"/>
+
+            <TextView
+                android:id="@+id/labelFrequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Frequency"
+                android:textColor="@color/fieldTextColor"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelTime"/>
+
+            <RadioGroup
+                android:id="@+id/radioGroupFrequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/labelFrequency"
+                app:layout_constraintBottom_toBottomOf="@id/labelFrequency">
+
+                <RadioButton
+                    android:id="@+id/radioDaily"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Daily"/>
+
+                <RadioButton
+                    android:id="@+id/radioWeekly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weekly"/>
+
+                <RadioButton
+                    android:id="@+id/radioMonthly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monthly"/>
+
+            </RadioGroup>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputTargetPEFR"
@@ -87,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Target PEFR Value"
-                app:layout_constraintTop_toBottomOf="@id/labelTime">
+                app:layout_constraintTop_toBottomOf="@id/labelFrequency">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextTargetPEFR"
