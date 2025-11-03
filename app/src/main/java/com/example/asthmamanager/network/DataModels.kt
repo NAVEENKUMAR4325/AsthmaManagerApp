@@ -14,8 +14,8 @@ data class SignupRequest(
     val height: Int? = null,
     val gender: String? = null,
     @SerializedName("contact_number") val contactInfo: String? = null, // "contact_info" changed to "contact_number"
-    val address: String? = null,
-    @SerializedName("baseline_pefr") val baselinePefr: Int? = null
+    val address: String? = null
+    // @SerializedName("baseline_pefr") val baselinePefr: Int? = null // <-- This line is now removed
 )
 
 data class TokenResponse(
@@ -34,7 +34,7 @@ data class User(
     val gender: String?,
     @SerializedName("contact_number") val contactInfo: String?, // "contact_info" changed to "contact_number"
     val address: String?,
-    val baseline: BaselinePEFR? // ADD THIS LINE
+    val baseline: BaselinePEFR? // This is correct
 )
 
 // --- PEFR & Baseline ---

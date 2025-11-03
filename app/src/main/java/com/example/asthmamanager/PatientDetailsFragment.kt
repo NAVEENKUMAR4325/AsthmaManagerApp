@@ -55,8 +55,7 @@ class PatientDetailsFragment : Fragment() {
                 height = height,
                 gender = gender,
                 contactInfo = contact,
-                address = address,
-                baselinePefr = baselinePefr
+                address = address
             )
 
             lifecycleScope.launch {

@@ -18,7 +18,7 @@
         <item name="android:spinnerItemStyle">@style/Widget.App.SpinnerItem</item>
     </style>
 
-    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="Widget.App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/white</item>
         <item name="boxCornerRadiusBottomEnd">12dp</item>
         <item name="boxCornerRadiusBottomStart">12dp</item>
