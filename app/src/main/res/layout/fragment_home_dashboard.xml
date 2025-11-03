@@ -163,20 +163,54 @@ PEFR Tracker"
                         app:layout_constraintTop_toBottomOf="@id/labelTodayZone" />
 
                     <TextView
+                        android:id="@+id/textPEFRPercentage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="(90%)"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toEndOf="@id/textPEFRValue"
+                        app:layout_constraintBaseline_toBaselineOf="@id/textPEFRValue"/>
+
+                    <TextView
+                        android:id="@+id/textTrendIndicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Improving"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/labelTodayZone"/>
+
+                    <TextView
+                        android:id="@+id/textLastRecorded"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Last recorded: 10:00 AM"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textPEFRValue"/>
+
+                    <TextView
                         android:id="@+id/textZoneGuidance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:text="Continue the inhaler - Controller"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textPEFRValue" />
+                        app:layout_constraintTop_toBottomOf="@id/textLastRecorded" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardSymptoms"
+                android:id="@+id/cardBaselinePEFR"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -196,61 +230,135 @@ PEFR Tracker"
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Asthma Symptoms"
+                        android:text="Baseline PEFR"
                         android:textColor="@color/white"
                         android:textSize="18sp"/>
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchWheeze"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/textBaselinePEFRValue"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Wheeze"
-                        android:textColor="@color/white"/>
+                        android:layout_marginTop="8dp"
+                        android:text="500"
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                        android:textStyle="bold"/>
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchCough"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Cough"
-                        android:textColor="@color/white"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchDysnea"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dysnea"
-                        android:textColor="@color/white"/>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSymptoms"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/cardLightBackgroundColor"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="@id/imageProfile"
+                app:layout_constraintStart_toStartOf="@id/imageAppIcon"
+                app:layout_constraintTop_toBottomOf="@id/cardBaselinePEFR">
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchNightSymptoms"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Night Symptoms"
-                        android:textColor="@color/white"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:text="Allergen Exposure"
+                        android:text="Asthma Symptoms"
                         android:textColor="@color/white"
                         android:textSize="18sp"/>
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchDust"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Dust"
-                        android:textColor="@color/white"/>
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp">
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchSmoke"
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Wheeze"
+                            android:textColor="@color/white"/>
+
+                        <RatingBar
+                            android:id="@+id/ratingWheeze"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="3"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Smoke"
-                        android:textColor="@color/white"/>
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cough"
+                            android:textColor="@color/white"/>
+
+                        <RatingBar
+                            android:id="@+id/ratingCough"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="3"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Dyspnea"
+                            android:textColor="@color/white"/>
+
+                        <RatingBar
+                            android:id="@+id/ratingDyspnea"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="3"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Night Symptoms"
+                            android:textColor="@color/white"/>
+
+                        <RatingBar
+                            android:id="@+id/ratingNightSymptoms"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="3"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

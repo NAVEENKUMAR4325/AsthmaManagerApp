@@ -9,11 +9,11 @@ data class SignupRequest(
     val email: String,
     val password: String,
     val role: String,
-    @SerializedName("full_name") val fullName: String? = null,
+    @SerializedName("name") val fullName: String? = null, // "full_name" changed to "name"
     val age: Int? = null,
     val height: Int? = null,
     val gender: String? = null,
-    @SerializedName("contact_info") val contactInfo: String? = null,
+    @SerializedName("contact_number") val contactInfo: String? = null, // "contact_info" changed to "contact_number"
     val address: String? = null,
     @SerializedName("baseline_pefr") val baselinePefr: Int? = null
 )
@@ -28,11 +28,11 @@ data class User(
     val id: Int,
     val email: String,
     val role: String,
-    @SerializedName("full_name") val fullName: String?,
+    @SerializedName("name") val fullName: String?, // "full_name" changed to "name"
     val age: Int?,
     val height: Int?,
     val gender: String?,
-    @SerializedName("contact_info") val contactInfo: String?,
+    @SerializedName("contact_number") val contactInfo: String?, // "contact_info" changed to "contact_number"
     val address: String?,
     @SerializedName("baseline_pefr") val baselinePefr: Int?
 )

@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.asthmamanager.databinding.FragmentHomeDashboardBinding
 import com.example.asthmamanager.network.RetrofitClient
 import com.example.asthmamanager.network.SymptomCreate
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -50,8 +51,6 @@ class HomeDashboardFragment : Fragment() {
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToNotificationFragment())
         }
 
-        // Set up the chart
-        setupChart()
         // Set up the toggle buttons
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
@@ -62,30 +61,37 @@ class HomeDashboardFragment : Fragment() {
             }
         }
 
-        // Set up the treatment notification
-        updateTreatmentNotification(450)
+        fetchDashboardData()
+        logSymptoms()
+    }
 
-        // Fetch user profile
+    private fun fetchDashboardData() {
         lifecycleScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
                     RetrofitClient.apiService.getMyProfile()
                 }
                 if (response.isSuccessful) {
-                    response.body()?.let {
+                    val user = response.body()
+                    user?.let {
                         binding.textViewHeader.text = "Welcome, ${it.fullName}"
+                        it.baselinePefr?.let {
+                            binding.textBaselinePEFRValue.text = it.toString()
+                            setupChart(it)
+                            updateTreatmentNotification(450, it) // Using a sample value for now
+                        }
                     }
                 }
             } catch (e: Exception) {
                 // Handle error
             }
         }
-
-        // Log symptoms
-        logSymptoms()
     }
 
-    private fun setupChart() {
+    private fun setupChart(baselinePefr: Int) {
+        val redZone = baselinePefr * 0.5f
+        val yellowZone = baselinePefr * 0.8f
+
         binding.lineChart.apply {
             description.isEnabled = false
             legend.isEnabled = false
@@ -94,6 +100,15 @@ class HomeDashboardFragment : Fragment() {
             axisLeft.setDrawGridLines(false)
             axisLeft.textColor = Color.WHITE
             axisRight.isEnabled = false
+
+            axisLeft.addLimitLine(LimitLine(redZone, "Red Zone").apply {
+                lineWidth = 2f
+                lineColor = Color.RED
+            })
+            axisLeft.addLimitLine(LimitLine(yellowZone, "Yellow Zone").apply {
+                lineWidth = 2f
+                lineColor = Color.YELLOW
+            })
         }
         showWeeklyData()
     }
@@ -170,8 +185,8 @@ class HomeDashboardFragment : Fragment() {
         )
     }
 
-    private fun updateTreatmentNotification(pefrValue: Int) {
-        val zone = getPEFRZone(pefrValue)
+    private fun updateTreatmentNotification(pefrValue: Int, baselinePefr: Int) {
+        val zone = getPEFRZone(pefrValue, baselinePefr)
         val advice = when (zone) {
             "Green Zone" -> "Continue the inhaler - Controller"
             "Yellow Zone" -> "Step up dose / Use reliever"
@@ -181,30 +196,28 @@ class HomeDashboardFragment : Fragment() {
         binding.textZoneGuidance.text = advice
     }
 
-    private fun getPEFRZone(pefrValue: Int): String {
-        // This is a simplified example. In a real app, you would have a more robust way to determine the zone.
+    private fun getPEFRZone(pefrValue: Int, baselinePefr: Int): String {
+        val percentage = (pefrValue.toFloat() / baselinePefr) * 100
         return when {
-            pefrValue >= 400 -> "Green Zone"
-            pefrValue >= 250 -> "Yellow Zone"
+            percentage >= 80 -> "Green Zone"
+            percentage >= 50 -> "Yellow Zone"
             else -> "Red Zone"
         }
     }
 
     private fun logSymptoms() {
-        val wheezeRating = if (binding.switchWheeze.isChecked) 1 else 0
-        val coughRating = if (binding.switchCough.isChecked) 1 else 0
-        val dyspneaRating = if (binding.switchDysnea.isChecked) 1 else 0
-        val nightSymptomsRating = if (binding.switchNightSymptoms.isChecked) 1 else 0
-        val dustExposure = binding.switchDust.isChecked
-        val smokeExposure = binding.switchSmoke.isChecked
+        val wheezeRating = binding.ratingWheeze.rating.toInt()
+        val coughRating = binding.ratingCough.rating.toInt()
+        val dyspneaRating = binding.ratingDyspnea.rating.toInt()
+        val nightSymptomsRating = binding.ratingNightSymptoms.rating.toInt()
 
         val symptomRequest = SymptomCreate(
             wheezeRating = wheezeRating,
             coughRating = coughRating,
             dyspneaRating = dyspneaRating,
             nightSymptomsRating = nightSymptomsRating,
-            dustExposure = dustExposure,
-            smokeExposure = smokeExposure,
+            dustExposure = null,
+            smokeExposure = null,
             severity = null,
             onsetAt = null,
             duration = null,

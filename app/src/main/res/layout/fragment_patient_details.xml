@@ -33,138 +33,126 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageBack" />
 
-    <TextView
-        android:id="@+id/labelName"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:text="Name"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
-
-    <EditText
-        android:id="@+id/editTextName"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/input_field_background"
-        android:hint="Enter your name"
-        android:inputType="textPersonName"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@color/fieldTextColor"
+        android:hint="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/labelName" />
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
 
-    <TextView
-        android:id="@+id/labelAge"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputAge"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Age"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@id/labelName"
-        app:layout_constraintTop_toBottomOf="@id/editTextName" />
+        android:hint="Age"
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName"
+        app:layout_constraintTop_toBottomOf="@id/textInputName">
 
-    <EditText
-        android:id="@+id/editTextAge"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputHeight"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/input_field_background"
-        android:hint="Enter your age"
-        android:inputType="number"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@color/fieldTextColor"
-        app:layout_constraintEnd_toEndOf="@id/editTextName"
-        app:layout_constraintStart_toStartOf="@id/editTextName"
-        app:layout_constraintTop_toBottomOf="@id/labelAge" />
-
-    <TextView
-        android:id="@+id/labelHeight"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Height"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@id/labelName"
-        app:layout_constraintTop_toBottomOf="@id/editTextAge" />
+        android:hint="Height (cm)"
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName"
+        app:layout_constraintTop_toBottomOf="@id/textInputAge">
 
-    <EditText
-        android:id="@+id/editTextHeight"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputGender"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/input_field_background"
-        android:hint="Enter height (cm)"
-        android:inputType="number"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@color/fieldTextColor"
-        app:layout_constraintEnd_toEndOf="@id/editTextName"
-        app:layout_constraintStart_toStartOf="@id/editTextName"
-        app:layout_constraintTop_toBottomOf="@id/labelHeight" />
-
-    <TextView
-        android:id="@+id/labelGender"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Gender"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@id/labelName"
-        app:layout_constraintTop_toBottomOf="@id/editTextHeight" />
+        android:hint="Gender"
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName"
+        app:layout_constraintTop_toBottomOf="@id/textInputHeight">
 
-    <EditText
-        android:id="@+id/editTextGender"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputContact"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/input_field_background"
-        android:hint="Enter your gender"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@color/fieldTextColor"
-        app:layout_constraintEnd_toEndOf="@id/editTextName"
-        app:layout_constraintStart_toStartOf="@id/editTextName"
-        app:layout_constraintTop_toBottomOf="@id/labelGender" />
-
-    <TextView
-        android:id="@+id/labelBaselinePefr"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Baseline PEFR"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@id/labelName"
-        app:layout_constraintTop_toBottomOf="@id/editTextGender" />
+        android:hint="Contact Number"
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName"
+        app:layout_constraintTop_toBottomOf="@id/textInputGender">
 
-    <EditText
-        android:id="@+id/editTextBaselinePefr"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputAddress"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/input_field_background"
-        android:hint="Enter your baseline PEFR"
-        android:inputType="number"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@color/fieldTextColor"
-        app:layout_constraintEnd_toEndOf="@id/editTextName"
-        app:layout_constraintStart_toStartOf="@id/editTextName"
-        app:layout_constraintTop_toBottomOf="@id/labelBaselinePefr" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Address"
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName"
+        app:layout_constraintTop_toBottomOf="@id/textInputContact">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputBaselinePefr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Baseline PEFR"
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName"
+        app:layout_constraintTop_toBottomOf="@id/textInputAddress">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextBaselinePefr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonNext"
@@ -177,7 +165,7 @@
         android:textSize="16sp"
         app:cornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/editTextName"
-        app:layout_constraintStart_toStartOf="@id/editTextName" />
+        app:layout_constraintEnd_toEndOf="@id/textInputName"
+        app:layout_constraintStart_toStartOf="@id/textInputName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

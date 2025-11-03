@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.asthmamanager.databinding.FragmentPatientDetailsBinding
 import com.example.asthmamanager.network.BaselinePEFRCreate
 import com.example.asthmamanager.network.RetrofitClient
+import com.example.asthmamanager.network.SignupRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,25 +33,51 @@ class PatientDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonNext.setOnClickListener {
-            val baselineValue = binding.editTextBaselinePefr.text.toString().toIntOrNull()
+            val name = binding.editTextName.text.toString().trim()
+            val age = binding.editTextAge.text.toString().toIntOrNull()
+            val height = binding.editTextHeight.text.toString().toIntOrNull()
+            val gender = binding.editTextGender.text.toString().trim()
+            val contact = binding.editTextContact.text.toString().trim()
+            val address = binding.editTextAddress.text.toString().trim()
+            val baselinePefr = binding.editTextBaselinePefr.text.toString().toIntOrNull()
 
-            if (baselineValue == null) {
-                Toast.makeText(requireContext(), "Please enter a valid baseline PEFR value", Toast.LENGTH_SHORT).show()
+            if (name.isEmpty() || age == null || height == null || gender.isEmpty() || contact.isEmpty() || address.isEmpty() || baselinePefr == null) {
+                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val baselineRequest = BaselinePEFRCreate(baselineValue)
+            val signupRequest = SignupRequest(
+                email = "", // This will be updated later
+                password = "", // This will be updated later
+                role = "Patient",
+                fullName = name,
+                age = age,
+                height = height,
+                gender = gender,
+                contactInfo = contact,
+                address = address,
+                baselinePefr = baselinePefr
+            )
 
             lifecycleScope.launch {
                 try {
                     val response = withContext(Dispatchers.IO) {
-                        RetrofitClient.apiService.setBaseline(baselineRequest)
+                        RetrofitClient.apiService.signup(signupRequest)
                     }
 
                     if (response.isSuccessful) {
-                        findNavController().navigate(PatientDetailsFragmentDirections.actionPatientDetailsFragmentToHomeDashboardFragment())
+                        val baselineRequest = BaselinePEFRCreate(baselinePefr)
+                        val baselineResponse = withContext(Dispatchers.IO) {
+                            RetrofitClient.apiService.setBaseline(baselineRequest)
+                        }
+
+                        if (baselineResponse.isSuccessful) {
+                            findNavController().navigate(PatientDetailsFragmentDirections.actionPatientDetailsFragmentToHomeDashboardFragment())
+                        } else {
+                            Toast.makeText(requireContext(), "Failed to set baseline. Please try again.", Toast.LENGTH_LONG).show()
+                        }
                     } else {
-                        Toast.makeText(requireContext(), "Failed to set baseline. Please try again.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Signup failed. Please try again.", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_LONG).show()

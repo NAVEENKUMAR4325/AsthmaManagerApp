@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.AsthmaManager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.AsthmaManager" parent="Theme.Material3.DayNight.NoActionBar">
 
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
