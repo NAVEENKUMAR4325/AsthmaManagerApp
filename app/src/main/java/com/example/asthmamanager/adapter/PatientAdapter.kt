@@ -1,4 +1,4 @@
-package com.example.asthmamanager
+package com.example.asthmamanager.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

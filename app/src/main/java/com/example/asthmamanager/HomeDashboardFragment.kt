@@ -75,10 +75,10 @@ class HomeDashboardFragment : Fragment() {
                     val user = response.body()
                     user?.let {
                         binding.textViewHeader.text = "Welcome, ${it.fullName}"
-                        it.baselinePefr?.let {
-                            binding.textBaselinePEFRValue.text = it.toString()
-                            setupChart(it)
-                            updateTreatmentNotification(450, it) // Using a sample value for now
+                        it.baseline?.let {
+                            binding.textBaselinePEFRValue.text = it.baselineValue.toString()
+                            setupChart(it.baselineValue)
+                            updateTreatmentNotification(450, it.baselineValue) // Using a sample value for now
                         }
                     }
                 }

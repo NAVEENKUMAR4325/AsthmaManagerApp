@@ -34,7 +34,7 @@ data class User(
     val gender: String?,
     @SerializedName("contact_number") val contactInfo: String?, // "contact_info" changed to "contact_number"
     val address: String?,
-    @SerializedName("baseline_pefr") val baselinePefr: Int?
+    val baseline: BaselinePEFR? // ADD THIS LINE
 )
 
 // --- PEFR & Baseline ---

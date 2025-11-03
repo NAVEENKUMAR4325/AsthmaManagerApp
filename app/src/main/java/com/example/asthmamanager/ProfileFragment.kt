@@ -64,7 +64,7 @@ class ProfileFragment : Fragment() {
                     binding.editTextAge.setText(user?.age?.toString())
                     binding.editTextHeight.setText(user?.height?.toString())
                     binding.editTextGender.setText(user?.gender)
-                    binding.editTextBaselinePEFR.setText(user?.baselinePefr?.toString())
+                    binding.editTextBaselinePEFR.setText(user?.baseline?.baselineValue?.toString())
                 } else {
                     Toast.makeText(requireContext(), "Failed to load profile", Toast.LENGTH_SHORT).show()
                 }
