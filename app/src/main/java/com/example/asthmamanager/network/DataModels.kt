@@ -9,13 +9,12 @@ data class SignupRequest(
     val email: String,
     val password: String,
     val role: String,
-    @SerializedName("name") val fullName: String? = null, // "full_name" changed to "name"
+    @SerializedName("name") val fullName: String? = null,
     val age: Int? = null,
     val height: Int? = null,
     val gender: String? = null,
-    @SerializedName("contact_number") val contactInfo: String? = null, // "contact_info" changed to "contact_number"
+    @SerializedName("contact_number") val contactInfo: String? = null,
     val address: String? = null
-    // @SerializedName("baseline_pefr") val baselinePefr: Int? = null // <-- This line is now removed
 )
 
 data class TokenResponse(
@@ -28,13 +27,18 @@ data class User(
     val id: Int,
     val email: String,
     val role: String,
-    @SerializedName("name") val fullName: String?, // "full_name" changed to "name"
+    @SerializedName("name") val fullName: String?,
     val age: Int?,
     val height: Int?,
     val gender: String?,
-    @SerializedName("contact_number") val contactInfo: String?, // "contact_info" changed to "contact_number"
+    @SerializedName("contact_number") val contactInfo: String?,
     val address: String?,
-    val baseline: BaselinePEFR? // This is correct
+    val baseline: BaselinePEFR?,
+
+    // --- [START] THIS IS THE CHANGE ---
+    @SerializedName("latest_pefr_record") val latestPefrRecord: PEFRRecord?,
+    @SerializedName("latest_symptom") val latestSymptom: Symptom?
+    // --- [END] THIS IS THE CHANGE ---
 )
 
 // --- PEFR & Baseline ---

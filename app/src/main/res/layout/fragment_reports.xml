@@ -31,7 +31,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Export Data"
+                android:text="@string/export_data_label"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="16dp"
-                android:text="Export as PDF"
+                android:text="@string/export_as_pdf_button"
                 android:backgroundTint="@color/accentColor"
                 android:textColor="@color/white"
                 app:cornerRadius="12dp" />
@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="8dp"
-                android:text="Export as CSV"
+                android:text="@string/export_as_csv_button"
                 android:backgroundTint="@color/accentColor"
                 android:textColor="@color/white"
                 app:cornerRadius="12dp" />
@@ -82,7 +82,7 @@
                 android:id="@+id/labelRealTimeSharing"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Enable Real-Time Data Sharing with Doctor"
+                android:text="@string/real_time_sharing_label"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="16sp"
                 android:textStyle="bold"

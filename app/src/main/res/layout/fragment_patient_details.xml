@@ -18,14 +18,14 @@
         app:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Back"/>
+        android:contentDescription="@string/back_button_description"/>
 
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="User Registration"
+        android:text="@string/user_registration_title"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -40,7 +40,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:hint="Name"
+        android:hint="@string/name_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle">
@@ -57,7 +57,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Age"
+        android:hint="@string/age_hint"
         app:layout_constraintEnd_toEndOf="@id/textInputName"
         app:layout_constraintStart_toStartOf="@id/textInputName"
         app:layout_constraintTop_toBottomOf="@id/textInputName">
@@ -74,7 +74,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Height (cm)"
+        android:hint="@string/height_hint"
         app:layout_constraintEnd_toEndOf="@id/textInputName"
         app:layout_constraintStart_toStartOf="@id/textInputName"
         app:layout_constraintTop_toBottomOf="@id/textInputAge">
@@ -91,7 +91,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Gender"
+        android:hint="@string/gender_hint"
         app:layout_constraintEnd_toEndOf="@id/textInputName"
         app:layout_constraintStart_toStartOf="@id/textInputName"
         app:layout_constraintTop_toBottomOf="@id/textInputHeight">
@@ -108,7 +108,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Contact Number"
+        android:hint="@string/contact_number_hint"
         app:layout_constraintEnd_toEndOf="@id/textInputName"
         app:layout_constraintStart_toStartOf="@id/textInputName"
         app:layout_constraintTop_toBottomOf="@id/textInputGender">
@@ -125,7 +125,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Address"
+        android:hint="@string/address_hint"
         app:layout_constraintEnd_toEndOf="@id/textInputName"
         app:layout_constraintStart_toStartOf="@id/textInputName"
         app:layout_constraintTop_toBottomOf="@id/textInputContact">
@@ -142,7 +142,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Baseline PEFR"
+        android:hint="@string/baseline_pefr_hint"
         app:layout_constraintEnd_toEndOf="@id/textInputName"
         app:layout_constraintStart_toStartOf="@id/textInputName"
         app:layout_constraintTop_toBottomOf="@id/textInputAddress">
@@ -160,7 +160,7 @@
         android:layout_height="60dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/accentColor"
-        android:text="Next"
+        android:text="@string/next_button"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:cornerRadius="12dp"

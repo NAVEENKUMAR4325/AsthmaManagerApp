@@ -5,7 +5,7 @@ plugins {
     // Apply kapt directly by its ID to resolve the conflict
     id("org.jetbrains.kotlin.kapt")
 
-    // This is for navigation
+    // This is for navigation (already correct)
     alias(libs.plugins.androidx.navigation.safeargs.kotlin)
 }
 

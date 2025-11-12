@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Symptoms"
+        android:text="@string/symptoms_label"
         android:textColor="@color/fieldTextColor"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -46,7 +46,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/accentColor"
-        android:text="View History"
+        android:text="@string/view_history_button"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:cornerRadius="12dp"
@@ -56,4 +56,27 @@
         app:layout_constraintTop_toBottomOf="@id/recyclerViewSymptoms"
         app:layout_constraintVertical_bias="1.0" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/noDataText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_pefr_data_found"
+        android:textColor="@color/fieldTextColor"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

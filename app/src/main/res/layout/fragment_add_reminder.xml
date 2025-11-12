@@ -32,21 +32,21 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Daily"/>
+            android:text="@string/daily_chip"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipWeekly"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weekly"/>
+            android:text="@string/weekly_chip"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipMonthly"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly"/>
+            android:text="@string/monthly_chip"/>
 
     </com.google.android.material.chip.ChipGroup>
 
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:singleSelection="true"
-        app:layout_constraintTop_toBottomOf="@+id/chipGroupFrequency"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFrequency"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -65,14 +65,14 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Record PEFR"/>
+            android:text="@string/record_pefr_chip"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipTakeMedication"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take Medication"/>
+            android:text="@string/take_medication_chip"/>
 
     </com.google.android.material.chip.ChipGroup>
 
@@ -81,7 +81,7 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="32dp"
-        android:text="Save"
+        android:text="@string/save_button"
         android:backgroundTint="@color/accentColor"
         android:textColor="@color/white"
         android:textSize="16sp"

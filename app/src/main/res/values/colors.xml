@@ -8,4 +8,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="cardLightBackgroundColor">#334DB6AC</color>
+    <color name="greenZone">#4CAF50</color>
+    <color name="yellowZone">#FBC02D</color>
+    <color name="fieldHintColor">#BDBDBD</color>
+    <color name="buttonColor">#00897B</color>
+    <color name="redZone">#F44336</color>
 </resources>

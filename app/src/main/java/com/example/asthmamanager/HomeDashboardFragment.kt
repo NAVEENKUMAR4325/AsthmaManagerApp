@@ -2,23 +2,29 @@ package com.example.asthmamanager
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.asthmamanager.databinding.FragmentHomeDashboardBinding
+import com.example.asthmamanager.network.PEFRRecord
 import com.example.asthmamanager.network.RetrofitClient
-import com.example.asthmamanager.network.SymptomCreate
+import com.example.asthmamanager.network.Symptom
+import com.example.asthmamanager.network.User
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class HomeDashboardFragment : Fragment() {
 
@@ -33,136 +39,198 @@ class HomeDashboardFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Fetch data every time the screen is viewed to keep it fresh
+        fetchDashboardData()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Navigate to Profile
+        // --- Navigation ---
         binding.imageProfile.setOnClickListener {
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToProfileFragment())
         }
-
-        // Navigate to PEFR Input screen
         binding.buttonRecordPEFR.setOnClickListener {
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToPEFRInputFragment())
         }
-
-        // Navigate to Notification screen
         binding.buttonSetReminder.setOnClickListener {
+            // Your nav graph has this pointing to NotificationFragment, which is fine
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToNotificationFragment())
         }
-
-        // Set up the toggle buttons
-        binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
-                when (checkedId) {
-                    R.id.buttonWeekly -> showWeeklyData()
-                    R.id.buttonMonthly -> showMonthlyData()
-                }
-            }
+        binding.cardGraph.setOnClickListener {
+            // Also navigate to graph when the chart is clicked
+            findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToGraphFragment())
         }
 
-        fetchDashboardData()
-        // logSymptoms() // <-- This should only be called on a button press, not on startup.
+        // This button in your XML navigates to the Treatment Plan
+        binding.cardTodayZone.setOnClickListener {
+            findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToTreatmentPlanFragment())
+        }
+
+        // --- Toggle ---
+        binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                // This will re-fetch data for the chart
+                fetchChartData(isWeekly = (checkedId == R.id.buttonWeekly))
+            }
+        }
     }
 
     private fun fetchDashboardData() {
-        // --- FIX: Show loading, hide content & error ---
-        binding.progressBar.visibility = View.VISIBLE
-        binding.textViewError.visibility = View.GONE
-        binding.contentScrollView.visibility = View.INVISIBLE
-        // --- END FIX ---
+        binding.progressBar.isVisible = true
+        binding.textViewError.isVisible = false
+        binding.contentScrollView.isVisible = false
 
         lifecycleScope.launch {
             try {
-                val response = withContext(Dispatchers.IO) {
-                    RetrofitClient.apiService.getMyProfile()
-                }
-
-                // --- FIX: Hide loading ---
-                binding.progressBar.visibility = View.GONE
-                // --- END FIX ---
+                // This now returns the User object with the new 'latest' fields
+                val response = RetrofitClient.apiService.getMyProfile()
+                binding.progressBar.isVisible = false
 
                 if (response.isSuccessful) {
                     val user = response.body()
-                    user?.let {
-                        // --- FIX: Show content ---
-                        binding.contentScrollView.visibility = View.VISIBLE
-                        // --- END FIX ---
-
-                        binding.textViewHeader.text = "Welcome, ${it.fullName}" // Using simple string concatenation
-                        it.baseline?.let { baseline ->
-                            // --- FIX: Set the correct TextView ID ---
-                            binding.textBaselinePEFRValue.text = baseline.baselineValue.toString()
-                            // --- END FIX ---
-                            setupChart(baseline.baselineValue)
-                            updateTreatmentNotification(450, baseline.baselineValue) // Using a sample value
-                        } ?: run {
-                            // Handle case where user has no baseline set
-                            binding.textBaselinePEFRValue.text = "N/A"
-                            // You could add a click listener to textBaselinePEFRValue
-                            // to navigate to the profile to set it.
-                        }
-                    } ?: run {
-                        // --- FIX: Handle successful but empty response ---
+                    if (user != null) {
+                        binding.contentScrollView.isVisible = true
+                        updateUI(user)
+                    } else {
                         binding.textViewError.text = "Could not retrieve user profile."
-                        binding.textViewError.visibility = View.VISIBLE
-                        // --- END FIX ---
+                        binding.textViewError.isVisible = true
                     }
                 } else {
-                    // --- FIX: Handle API error (e.g., 404, 500) ---
                     binding.textViewError.text = "Error: ${response.message()}"
-                    binding.textViewError.visibility = View.VISIBLE
-                    // --- END FIX ---
+                    binding.textViewError.isVisible = true
                 }
             } catch (e: Exception) {
-                // --- FIX: Handle network failure (e.g., no internet) ---
-                binding.progressBar.visibility = View.GONE
+                binding.progressBar.isVisible = false
                 binding.textViewError.text = "Network error. Please check your connection."
-                binding.textViewError.visibility = View.VISIBLE
-                // --- END FIX ---
+                binding.textViewError.isVisible = true
+                Log.e("HomeDashboard", "Network Exception: ${e.message}", e)
             }
         }
     }
 
-    private fun setupChart(baselinePefr: Int) {
+    private fun updateUI(user: User) {
+        binding.textViewHeader.text = "Welcome, ${user.fullName ?: "User"}"
+
+        // --- 1. Update Baseline Card ---
+        val baseline = user.baseline?.baselineValue
+        if (baseline != null) {
+            binding.textBaselinePEFRValue.text = baseline.toString()
+            setupChartLimits(baseline) // Setup chart zones
+        } else {
+            binding.textBaselinePEFRValue.text = "N/A"
+            binding.lineChart.clear()
+            binding.lineChart.invalidate()
+            // Prompt user to set baseline
+            binding.textBaselinePEFRValue.setOnClickListener {
+                Toast.makeText(context, "Please set your baseline PEFR in your Profile.", Toast.LENGTH_LONG).show()
+                findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToProfileFragment())
+            }
+        }
+
+        // --- 2. Update Today's Zone Card ---
+        val latestPefr = user.latestPefrRecord
+        if (latestPefr != null) {
+            binding.textPEFRValue.text = latestPefr.pefrValue.toString()
+            binding.textPEFRPercentage.text = "(${latestPefr.percentage?.toInt() ?: 0}%)"
+            binding.textTrendIndicator.text = latestPefr.trend?.replaceFirstChar { it.uppercase() } ?: "Stable"
+            binding.textLastRecorded.text = "Last recorded: ${formatDate(latestPefr.recordedAt)}"
+            updateZoneUI(latestPefr.zone)
+        } else {
+            // No PEFR data yet
+            binding.textPEFRValue.text = "---"
+            binding.textPEFRPercentage.text = ""
+            binding.textTrendIndicator.text = "No Data"
+            binding.textLastRecorded.text = "No PEFR recorded yet"
+            updateZoneUI("Unknown")
+        }
+
+        // --- 3. Update Symptoms Card ---
+        val latestSymptom = user.latestSymptom
+        if (latestSymptom != null) {
+            binding.ratingWheeze.rating = latestSymptom.wheezeRating?.toFloat() ?: 0f
+            binding.ratingCough.rating = latestSymptom.coughRating?.toFloat() ?: 0f
+            binding.ratingDyspnea.rating = latestSymptom.dyspneaRating?.toFloat() ?: 0f
+            binding.ratingNightSymptoms.rating = latestSymptom.nightSymptomsRating?.toFloat() ?: 0f
+        } else {
+            // No symptoms recorded
+            binding.ratingWheeze.rating = 0f
+            binding.ratingCough.rating = 0f
+            binding.ratingDyspnea.rating = 0f
+            binding.ratingNightSymptoms.rating = 0f
+        }
+
+        // --- 4. Fetch Chart Data (Default to Weekly) ---
+        binding.toggleGroup.check(R.id.buttonWeekly) // Ensure weekly is checked
+        fetchChartData(isWeekly = true)
+    }
+
+    private fun setupChartLimits(baselinePefr: Int) {
         val redZone = baselinePefr * 0.5f
         val yellowZone = baselinePefr * 0.8f
+
+        val axis = binding.lineChart.axisLeft
+        axis.removeAllLimitLines() // Clear old limits
+        axis.addLimitLine(LimitLine(redZone, "Red Zone").apply {
+            lineWidth = 2f
+            lineColor = Color.RED
+            textColor = Color.WHITE
+        })
+        axis.addLimitLine(LimitLine(yellowZone, "Yellow Zone").apply {
+            lineWidth = 2f
+            lineColor = Color.YELLOW
+            textColor = Color.WHITE
+        })
+        axis.axisMinimum = 0f // Start Y-axis at 0
+        axis.setDrawGridLines(false)
+        axis.textColor = Color.WHITE
 
         binding.lineChart.apply {
             description.isEnabled = false
             legend.isEnabled = false
             xAxis.setDrawGridLines(false)
             xAxis.setDrawLabels(false)
-            axisLeft.setDrawGridLines(false)
-            axisLeft.textColor = Color.WHITE
             axisRight.isEnabled = false
-
-            axisLeft.addLimitLine(LimitLine(redZone, "Red Zone").apply {
-                lineWidth = 2f
-                lineColor = Color.RED
-            })
-            axisLeft.addLimitLine(LimitLine(yellowZone, "Yellow Zone").apply {
-                lineWidth = 2f
-                lineColor = Color.YELLOW
-            })
         }
-        showWeeklyData()
     }
 
-    private fun showWeeklyData() {
-        val entries = getWeeklySampleData()
-        val dataSet = LineDataSet(entries, "Weekly PEFR")
-        styleDataSet(dataSet)
-        binding.lineChart.data = LineData(dataSet)
-        binding.lineChart.invalidate()
-    }
+    private fun fetchChartData(isWeekly: Boolean) {
+        lifecycleScope.launch {
+            try {
+                // --- This now fetches REAL data ---
+                val response = RetrofitClient.apiService.getMyPefrRecords()
+                if (response.isSuccessful && response.body() != null) {
+                    val records = response.body()!!
 
-    private fun showMonthlyData() {
-        val entries = getMonthlySampleData()
-        val dataSet = LineDataSet(entries, "Monthly PEFR")
-        styleDataSet(dataSet)
-        binding.lineChart.data = LineData(dataSet)
-        binding.lineChart.invalidate()
+                    val entries = if (isWeekly) {
+                        // Get the last 7 records
+                        records.takeLast(7).mapIndexed { i, record -> Entry(i.toFloat(), record.pefrValue.toFloat()) }
+                    } else {
+                        // Get the last 30 records for "Monthly"
+                        records.takeLast(30).mapIndexed { i, record -> Entry(i.toFloat(), record.pefrValue.toFloat()) }
+                    }
+
+                    if(entries.isNotEmpty()) {
+                        val dataSet = LineDataSet(entries, if(isWeekly) "Weekly PEFR" else "Monthly PEFR")
+                        styleDataSet(dataSet)
+                        binding.lineChart.data = LineData(dataSet)
+                    } else {
+                        binding.lineChart.clear() // No data, clear the chart
+                    }
+
+                } else {
+                    Log.e("HomeDashboard", "Failed to fetch chart data")
+                    binding.lineChart.clear()
+                }
+            } catch (e: Exception) {
+                Log.e("HomeDashboard", "Chart data exception: ${e.message}", e)
+                binding.lineChart.clear()
+            } finally {
+                binding.lineChart.invalidate() // Refresh the chart
+            }
+        }
     }
 
     private fun styleDataSet(dataSet: LineDataSet) {
@@ -171,109 +239,43 @@ class HomeDashboardFragment : Fragment() {
         dataSet.setCircleColor(Color.WHITE)
         dataSet.setDrawCircleHole(false)
         dataSet.setDrawValues(false)
+        dataSet.lineWidth = 2.5f
     }
 
-    private fun getWeeklySampleData(): List<Entry> {
-        return listOf(
-            Entry(0f, 450f),
-            Entry(1f, 460f),
-            Entry(2f, 440f),
-            Entry(3f, 470f),
-            Entry(4f, 455f),
-            Entry(5f, 465f),
-            Entry(6f, 450f)
-        )
-    }
+    private fun updateZoneUI(zone: String) {
+        // You must add these colors to your colors.xml
+        val green = ContextCompat.getColor(requireContext(), R.color.greenZone)
+        val yellow = ContextCompat.getColor(requireContext(), R.color.yellowZone)
+        val red = ContextCompat.getColor(requireContext(), R.color.redZone)
+        val grey = ContextCompat.getColor(requireContext(), R.color.cardLightBackgroundColor) // Use a default
 
-    private fun getMonthlySampleData(): List<Entry> {
-        return listOf(
-            Entry(0f, 450f),
-            Entry(1f, 460f),
-            Entry(2f, 440f),
-            Entry(3f, 470f),
-            Entry(4f, 455f),
-            Entry(5f, 465f),
-            Entry(6f, 450f),
-            Entry(7f, 455f),
-            Entry(8f, 460f),
-            Entry(9f, 470f),
-            Entry(10f, 465f),
-            Entry(11f, 455f),
-            Entry(12f, 460f),
-            Entry(13f, 450f),
-            Entry(14f, 440f),
-            Entry(15f, 450f),
-            Entry(16f, 460f),
-            Entry(17f, 455f),
-            Entry(18f, 465f),
-            Entry(19f, 470f),
-            Entry(20f, 450f),
-            Entry(21f, 460f),
-            Entry(22f, 455f),
-            Entry(23f, 440f),
-            Entry(24f, 460f),
-            Entry(25f, 450f),
-            Entry(26f, 465f),
-            Entry(27f, 455f),
-            Entry(28f, 470f),
-            Entry(29f, 460f),
-            Entry(30f, 450f)
-        )
-    }
-
-    private fun updateTreatmentNotification(pefrValue: Int, baselinePefr: Int) {
-        val zone = getPEFRZone(pefrValue, baselinePefr)
-        val advice = when (zone) {
-            "Green Zone" -> "Continue the inhaler - Controller"
-            "Yellow Zone" -> "Step up dose / Use reliever"
-            "Red Zone" -> "Emergency hospital visit"
-            else -> "Set baseline in profile"
-        }
-        binding.textZoneGuidance.text = advice
-    }
-
-    private fun getPEFRZone(pefrValue: Int, baselinePefr: Int): String {
-        if (baselinePefr == 0) return "Unknown Zone" // Prevent division by zero
-        val percentage = (pefrValue.toFloat() / baselinePefr) * 100
-        return when {
-            percentage >= 80 -> "Green Zone"
-            percentage >= 50 -> "Yellow Zone"
-            else -> "Red Zone"
-        }
-    }
-
-    private fun logSymptoms() {
-        // --- FIX: Use correct RatingBar IDs from XML ---
-        val wheezeRating = binding.ratingWheeze.rating.toInt()
-        val coughRating = binding.ratingCough.rating.toInt()
-        val dyspneaRating = binding.ratingDyspnea.rating.toInt()
-        val nightSymptomsRating = binding.ratingNightSymptoms.rating.toInt()
-        // --- END FIX ---
-
-        val symptomRequest = SymptomCreate(
-            wheezeRating = wheezeRating,
-            coughRating = coughRating,
-            dyspneaRating = dyspneaRating,
-            nightSymptomsRating = nightSymptomsRating,
-            dustExposure = null,
-            smokeExposure = null,
-            severity = null,
-            onsetAt = null,
-            duration = null,
-            suspectedTrigger = null
-        )
-
-        lifecycleScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    RetrofitClient.apiService.recordSymptom(symptomRequest)
-                }
-                // Optionally show a Toast confirmation
-                // Toast.makeText(requireContext(), "Symptoms logged", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                // Handle error
-                Toast.makeText(requireContext(), "Could not log symptoms", Toast.LENGTH_SHORT).show()
+        when (zone) {
+            "Green" -> {
+                binding.cardTodayZone.setCardBackgroundColor(green)
+                binding.textZoneGuidance.text = "You are in the Green Zone. Continue your regular plan."
             }
+            "Yellow" -> {
+                binding.cardTodayZone.setCardBackgroundColor(yellow)
+                binding.textZoneGuidance.text = "Yellow Zone: Use your reliever inhaler. Follow your action plan."
+            }
+            "Red" -> {
+                binding.cardTodayZone.setCardBackgroundColor(red)
+                binding.textZoneGuidance.text = "Red Zone: Medical Emergency. Use reliever and seek help."
+            }
+            else -> { // Unknown
+                binding.cardTodayZone.setCardBackgroundColor(grey)
+                binding.textZoneGuidance.text = "Record a PEFR value to see your current zone."
+            }
+        }
+    }
+
+    private fun formatDate(date: Date): String {
+        return try {
+            // Format as "12 Nov, 10:30 AM"
+            val sdf = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault())
+            sdf.format(date)
+        } catch (e: Exception) {
+            "just now"
         }
     }
 

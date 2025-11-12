@@ -32,8 +32,8 @@
                 android:id="@+id/textZoneTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You are in the: YELLOW ZONE"
-                android:textColor="#FBC02D"
+                android:text="@string/loading_status"
+                android:textColor="@color/fieldTextColor"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"/>
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Step up your medication as prescribed. Use your reliever inhaler. If symptoms do not improve, contact your doctor."
+                android:text="@string/wait_for_data"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="16sp"
                 android:lineSpacingExtra="4dp"/>
@@ -56,13 +56,57 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="24dp"
-        android:text="View Detailed Prescription"
-        android:backgroundTint="@color/accentColor"
-        android:textColor="@color/white"
+        android:text="@string/view_detailed_prescription_button"
         android:textSize="16sp"
         app:cornerRadius="12dp"
         app:layout_constraintStart_toStartOf="@id/planCard"
         app:layout_constraintEnd_toEndOf="@id/planCard"
         app:layout_constraintTop_toBottomOf="@id/planCard" />
+
+    <TextView
+        android:id="@+id/textMedicationsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/your_prescribed_medications"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="@id/planCard"
+        app:layout_constraintTop_toBottomOf="@id/buttonViewPrescription" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMedications"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/textMedicationsTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_medication" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textNoMedications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_medications_prescribed"
+        android:textColor="@color/fieldTextColor"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textMedicationsTitle"
+        app:layout_constraintStart_toStartOf="@id/planCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

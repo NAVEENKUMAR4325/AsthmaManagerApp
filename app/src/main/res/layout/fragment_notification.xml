@@ -31,7 +31,7 @@
                 android:id="@+id/labelReminder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Reminder"
+                android:text="@string/set_reminder_label"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Time"
+                android:text="@string/time_label"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +62,7 @@
                 android:id="@+id/textTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10:00 AM"
+                android:text="@string/time_placeholder"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -77,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Frequency"
+                android:text="@string/frequency_label"
                 android:textColor="@color/fieldTextColor"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -96,19 +96,19 @@
                     android:id="@+id/radioDaily"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Daily"/>
+                    android:text="@string/daily_radio_button"/>
 
                 <RadioButton
                     android:id="@+id/radioWeekly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weekly"/>
+                    android:text="@string/weekly_radio_button"/>
 
                 <RadioButton
                     android:id="@+id/radioMonthly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Monthly"/>
+                    android:text="@string/monthly_radio_button"/>
 
             </RadioGroup>
 
@@ -117,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Target PEFR Value"
+                android:hint="@string/target_pefr_hint"
                 app:layout_constraintTop_toBottomOf="@id/labelFrequency">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -138,7 +138,7 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="24dp"
-        android:text="Save"
+        android:text="@string/save_button"
         android:backgroundTint="@color/accentColor"
         android:textColor="@color/white"
         android:textSize="16sp"

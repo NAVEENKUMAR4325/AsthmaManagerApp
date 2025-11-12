@@ -32,9 +32,7 @@ class PEFRInputFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // --- FIX: Set the Activity's toolbar title ---
         (activity as? AppCompatActivity)?.supportActionBar?.title = "Record PEFR"
-        // --- END FIX ---
 
         binding.buttonSubmit.setOnClickListener {
             val pefrValue = binding.editTextPEFR.text.toString().toIntOrNull()
@@ -46,6 +44,10 @@ class PEFRInputFragment : Fragment() {
 
             val pefrRequest = PEFRRecordCreate(pefrValue)
 
+            // --- Disable button to prevent double-click ---
+            binding.buttonSubmit.isEnabled = false
+            binding.buttonSubmit.text = "Saving..."
+
             lifecycleScope.launch {
                 try {
                     val response = withContext(Dispatchers.IO) {
@@ -54,12 +56,22 @@ class PEFRInputFragment : Fragment() {
 
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "PEFR recorded successfully", Toast.LENGTH_SHORT).show()
-                        findNavController().popBackStack()
+
+                        // --- THIS IS THE CHANGE ---
+                        // Instead of popBackStack(), we navigate to the symptom tracker
+                        // This ID comes from your nav_graph.xml
+                        findNavController().navigate(R.id.action_homeDashboardFragment_to_symptomTrackerFragment)
+                        // --- END OF CHANGE ---
+
                     } else {
                         Toast.makeText(requireContext(), "Failed to record PEFR. Please try again.", Toast.LENGTH_LONG).show()
+                        binding.buttonSubmit.isEnabled = true // Re-enable on error
+                        binding.buttonSubmit.text = "Submit" // Reset text on error
                     }
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_LONG).show()
+                    binding.buttonSubmit.isEnabled = true // Re-enable on error
+                    binding.buttonSubmit.text = "Submit" // Reset text on error
                 }
             }
         }

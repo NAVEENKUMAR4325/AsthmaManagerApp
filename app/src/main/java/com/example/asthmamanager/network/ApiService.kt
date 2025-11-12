@@ -75,15 +75,11 @@ interface ApiService {
         @Query("zone") zone: String?
     ): Response<List<User>>
 
-    // --- [START] NEW FUNCTION TO LINK PATIENT TO DOCTOR ---
     @POST("/patient/link-doctor")
     suspend fun linkDoctor(
         @Body linkRequest: DoctorPatientLinkRequest
     ): Response<DoctorPatientLink>
-    // --- [END] NEW FUNCTION TO LINK PATIENT TO DOCTOR ---
 
-
-    // --- [START] NEW DOCTOR FUNCTIONS ---
     @GET("/patient/{patient_id}/pefr")
     suspend fun getPatientPefrRecords(
         @Path("patient_id") patientId: Int
@@ -93,5 +89,25 @@ interface ApiService {
     suspend fun getPatientSymptomRecords(
         @Path("patient_id") patientId: Int
     ): Response<List<Symptom>>
-    // --- [END] NEW DOCTOR FUNCTIONS ---
+
+
+    // --- [START] NEW PATIENT-VIEW FUNCTIONS ---
+    // These are needed for the patient's GraphFragment
+
+    @GET("/pefr/records") // Endpoint for a patient to get their own records
+    suspend fun getMyPefrRecords(): Response<List<PEFRRecord>>
+
+    @GET("/symptom/records") // Endpoint for a patient to get their own symptoms
+    suspend fun getMySymptomRecords(): Response<List<Symptom>>
+
+    // --- [END] NEW PATIENT-VIEW FUNCTIONS ---
+
+
+    // --- [START] NEW FUNCTION FOR PRESCRIBING ---
+    @POST("/doctor/patient/{patient_id}/medication")
+    suspend fun prescribeMedication(
+        @Path("patient_id") patientId: Int,
+        @Body medicationRequest: MedicationCreate
+    ): Response<Medication>
+    // --- [END] NEW FUNCTION FOR PRESCRIBING ---
 }

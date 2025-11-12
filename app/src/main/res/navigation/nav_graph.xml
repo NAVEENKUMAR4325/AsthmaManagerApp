@@ -202,6 +202,11 @@
             android:name="patientId"
             app:argType="integer"
             android:defaultValue="-1" />
+
+        <action
+            android:id="@+id/action_graphFragment_to_historyListFragment"
+            app:destination="@id/historyListFragment" />
+
     </fragment>
 
     <fragment
@@ -247,6 +252,17 @@
         <argument
             android:name="patientId"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyListFragment"
+        android:name="com.example.asthmamanager.HistoryListFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history_list" >
+        <argument
+            android:name="patientId"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
 
 </navigation>
