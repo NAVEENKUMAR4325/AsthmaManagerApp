@@ -47,18 +47,15 @@ class GraphFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Setup the title
         if (patientId == -1) {
             (activity as? AppCompatActivity)?.supportActionBar?.title = "My PEFR Graph"
         } else {
             (activity as? AppCompatActivity)?.supportActionBar?.title = "Patient Graph (ID: $patientId)"
         }
 
-        // Setup the adapter
         binding.recyclerViewSymptoms.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewSymptoms.adapter = SymptomAdapter(emptyList())
 
-        // Setup the View History button
         binding.buttonViewHistory.setOnClickListener {
             val action = GraphFragmentDirections.actionGraphFragmentToHistoryListFragment(patientId)
             findNavController().navigate(action)
@@ -70,8 +67,18 @@ class GraphFragment : Fragment() {
         fetchData()
     }
 
+    // --- NEW HELPER TO PARSE DATES ---
+    private fun parseDate(dateString: String?): Date {
+        if (dateString == null) return Date()
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            inputFormat.parse(dateString) ?: Date()
+        } catch (e: Exception) {
+            Date()
+        }
+    }
+
     private fun fetchData() {
-        // Show progress bar and hide content
         binding.progressBar.isVisible = true
         binding.lineChart.isVisible = false
         binding.recyclerViewSymptoms.isVisible = false
@@ -79,7 +86,6 @@ class GraphFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                // --- 1. Fetch PEFR Data ---
                 val pefrResponse = if (patientId == -1) {
                     RetrofitClient.apiService.getMyPefrRecords()
                 } else {
@@ -100,7 +106,6 @@ class GraphFragment : Fragment() {
                     handleApiError("PEFR", pefrResponse.message())
                 }
 
-                // --- 2. Fetch Symptom Data ---
                 val symptomResponse = if (patientId == -1) {
                     RetrofitClient.apiService.getMySymptomRecords()
                 } else {
@@ -145,12 +150,13 @@ class GraphFragment : Fragment() {
         if(parts.isEmpty()) return null
 
         val sdf = SimpleDateFormat("dd MMM, HH:mm", Locale.getDefault())
-        val dateString = sdf.format(s.recordedAt)
+        // *** PARSE STRING DATE HERE ***
+        val date = parseDate(s.recordedAt)
+        val dateString = sdf.format(date)
 
         return "$dateString: ${parts.joinToString(", ")}"
     }
 
-    // --- THIS IS THE MISSING FUNCTION ---
     private fun handleApiError(type: String, message: String) {
         Log.e("GraphFragment", "Error fetching $type: $message")
         Toast.makeText(context, "Error fetching $type data", Toast.LENGTH_SHORT).show()
@@ -160,16 +166,19 @@ class GraphFragment : Fragment() {
             binding.noDataText.text = "Error loading PEFR data."
         }
     }
-    // --- END OF NEW FUNCTION ---
 
     private fun setupChart(pefrRecords: List<PEFRRecord>) {
         val entries = mutableListOf<Entry>()
         val xLabels = mutableListOf<String>()
         val sdf = SimpleDateFormat("dd MMM", Locale.getDefault())
 
-        pefrRecords.sortedBy { it.recordedAt }.forEachIndexed { index, record ->
+        // *** SORT BY PARSED DATE ***
+        pefrRecords.sortedBy { parseDate(it.recordedAt) }.forEachIndexed { index, record ->
             entries.add(Entry(index.toFloat(), record.pefrValue.toFloat()))
-            xLabels.add(sdf.format(record.recordedAt))
+
+            // *** PARSE DATE FOR LABEL ***
+            val date = parseDate(record.recordedAt)
+            xLabels.add(sdf.format(date))
         }
 
         val dataSet = LineDataSet(entries, "Patient PEFR")
@@ -189,7 +198,7 @@ class GraphFragment : Fragment() {
             xAxis.granularity = 1f
         }
 
-        binding.lineChart.invalidate() // Refresh the chart
+        binding.lineChart.invalidate()
     }
 
     private fun setupSymptomList(symptoms: List<String>) {

@@ -1,7 +1,7 @@
 package com.example.asthmamanager.network
 
 import com.google.gson.annotations.SerializedName
-import java.util.Date
+import java.util.Date // Keep this import, it's okay if unused
 
 // --- Auth ---
 
@@ -34,11 +34,8 @@ data class User(
     @SerializedName("contact_number") val contactInfo: String?,
     val address: String?,
     val baseline: BaselinePEFR?,
-
-    // --- [START] THIS IS THE CHANGE ---
     @SerializedName("latest_pefr_record") val latestPefrRecord: PEFRRecord?,
     @SerializedName("latest_symptom") val latestSymptom: Symptom?
-    // --- [END] THIS IS THE CHANGE ---
 )
 
 // --- PEFR & Baseline ---
@@ -67,8 +64,11 @@ data class PEFRRecord(
     @SerializedName("pefr_value")
     val pefrValue: Int,
     val zone: String,
+
+    // *** CHANGED TO STRING ***
     @SerializedName("recorded_at")
-    val recordedAt: Date,
+    val recordedAt: String,
+
     @SerializedName("owner_id")
     val ownerId: Int,
     val percentage: Double?,
@@ -100,8 +100,11 @@ data class SymptomCreate(
     @SerializedName("night_symptoms_rating")
     val nightSymptomsRating: Int?,
     val severity: String?,
+
+    // *** THIS IS THE FIX ***
     @SerializedName("onset_at")
-    val onsetAt: Date?,
+    val onsetAt: String?, // <-- WAS: Date?
+
     val duration: Int?,
     @SerializedName("suspected_trigger")
     val suspectedTrigger: String?
@@ -109,8 +112,11 @@ data class SymptomCreate(
 
 data class Symptom(
     val id: Int,
+
+    // *** This should already be String from our last fix ***
     @SerializedName("recorded_at")
-    val recordedAt: Date,
+    val recordedAt: String,
+
     @SerializedName("owner_id")
     val ownerId: Int,
     @SerializedName("wheeze_rating")
@@ -126,8 +132,11 @@ data class Symptom(
     @SerializedName("night_symptoms_rating")
     val nightSymptomsRating: Int?,
     val severity: String?,
+
+    // *** THIS IS THE FIX ***
     @SerializedName("onset_at")
-    val onsetAt: Date?,
+    val onsetAt: String?, // <-- WAS: Date?
+
     val duration: Int?,
     @SerializedName("suspected_trigger")
     val suspectedTrigger: String?
@@ -205,5 +214,3 @@ data class DoctorPatientLink(
     @SerializedName("patient_id")
     val patientId: Int
 )
-
-// --- [END] NEW DOCTOR-PATIENT LINK MODELS ---

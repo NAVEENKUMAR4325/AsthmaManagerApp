@@ -31,8 +31,6 @@ class Medication(MedicationBase):
 class EmergencyContactBase(BaseModel):
     name: str
     phone_number: str
-    
-    # --- THIS IS THE FIX ---
     contact_relationship: Optional[str] = None
 
 class EmergencyContactCreate(EmergencyContactBase):
@@ -64,55 +62,7 @@ class Reminder(ReminderBase):
     class Config(ConfigBase):
         pass
 
-# --- User & Auth Schemas ---
-
-class UserBase(BaseModel):
-    email: EmailStr
-    name: str
-    role: UserRole
-
-class UserCreate(UserBase):
-    password: str
-    # --- ADDED FIELDS ---
-    age: Optional[int] = None
-    height: Optional[int] = None
-    gender: Optional[str] = None
-    contact_number: Optional[str] = None
-    address: Optional[str] = None
-
-class User(UserBase):
-    id: int
-    # --- ADDED FIELDS ---
-    age: Optional[int] = None
-    height: Optional[int] = None
-    gender: Optional[str] = None
-    contact_number: Optional[str] = None
-    address: Optional[str] = None
-    
-    # --- ADDED RELATIONSHIPS ---
-    medications: List[Medication] = []
-    emergency_contacts: List[EmergencyContact] = []
-    reminders: List[Reminder] = []
-    
-    # --- THIS IS THE FIX ---
-    baseline: Optional["BaselinePEFR"] = None
-
-    class Config(ConfigBase):
-        pass
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    user_role: UserRole
-
-class TokenData(BaseModel):
-    email: Optional[str] = None
-
-# --- PEFR Schemas ---
+# --- PEFR Schemas (Defined before User) ---
 
 class BaselinePEFRBase(BaseModel):
     baseline_value: int
@@ -129,7 +79,7 @@ class BaselinePEFR(BaselinePEFRBase):
 
 class PEFRRecordCreate(BaseModel):
     pefr_value: int
-    source: Optional[str] = "manual" # Allow setting source on creation
+    source: Optional[str] = "manual"
 
 class PEFRRecord(BaseModel):
     id: int
@@ -137,8 +87,6 @@ class PEFRRecord(BaseModel):
     zone: str
     recorded_at: datetime
     owner_id: int
-    
-    # --- ADDED FIELDS ---
     percentage: Optional[float] = None
     trend: Optional[str] = None
     source: Optional[str] = None
@@ -150,20 +98,16 @@ class PEFRRecordResponse(BaseModel):
     zone: str
     guidance: str
     record: PEFRRecord
-    
-    # --- ADDED FIELDS ---
     percentage: Optional[float] = None
     trend: Optional[str] = None
 
-# --- Symptom Schemas ---
+# --- Symptom Schemas (Defined before User) ---
 
 class SymptomCreate(BaseModel):
     wheeze_rating: Optional[int] = None
     cough_rating: Optional[int] = None
     dust_exposure: Optional[bool] = False
     smoke_exposure: Optional[bool] = False
-    
-    # --- ADDED FIELDS ---
     dyspnea_rating: Optional[int] = None
     night_symptoms_rating: Optional[int] = None
     severity: Optional[str] = None
@@ -179,8 +123,57 @@ class Symptom(SymptomCreate):
     class Config(ConfigBase):
         pass
 
-# This line allows the User schema to find the BaselinePEFR schema
-User.update_forward_refs()
+# --- User & Auth Schemas ---
+
+class UserBase(BaseModel):
+    email: EmailStr
+    name: str
+    role: UserRole
+
+class UserCreate(UserBase):
+    password: str
+    age: Optional[int] = None
+    height: Optional[int] = None
+    gender: Optional[str] = None
+    contact_number: Optional[str] = None
+    address: Optional[str] = None
+
+class User(UserBase):
+    id: int
+    age: Optional[int] = None
+    height: Optional[int] = None
+    gender: Optional[str] = None
+    contact_number: Optional[str] = None
+    address: Optional[str] = None
+    
+    # Relationships
+    medications: List[Medication] = []
+    emergency_contacts: List[EmergencyContact] = []
+    reminders: List[Reminder] = []
+    baseline: Optional[BaselinePEFR] = None
+    
+    # --- [START] THIS IS THE CHANGE ---
+    latest_pefr_record: Optional[PEFRRecord] = None
+    latest_symptom: Optional[Symptom] = None
+    # --- [END] THIS IS THE CHANGE ---
+
+    class Config(ConfigBase):
+        pass
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user_role: UserRole
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+# This line is no longer needed if schemas are defined before User
+# User.update_forward_refs()
 
 
 # --- [START] NEW DOCTOR-PATIENT LINK SCHEMAS ---

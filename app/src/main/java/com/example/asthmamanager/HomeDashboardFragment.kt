@@ -13,15 +13,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.asthmamanager.databinding.FragmentHomeDashboardBinding
-import com.example.asthmamanager.network.PEFRRecord
 import com.example.asthmamanager.network.RetrofitClient
-import com.example.asthmamanager.network.Symptom
 import com.example.asthmamanager.network.User
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -41,14 +40,12 @@ class HomeDashboardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Fetch data every time the screen is viewed to keep it fresh
         fetchDashboardData()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // --- Navigation ---
         binding.imageProfile.setOnClickListener {
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToProfileFragment())
         }
@@ -56,23 +53,16 @@ class HomeDashboardFragment : Fragment() {
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToPEFRInputFragment())
         }
         binding.buttonSetReminder.setOnClickListener {
-            // Your nav graph has this pointing to NotificationFragment, which is fine
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToNotificationFragment())
         }
         binding.cardGraph.setOnClickListener {
-            // Also navigate to graph when the chart is clicked
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToGraphFragment())
         }
-
-        // This button in your XML navigates to the Treatment Plan
         binding.cardTodayZone.setOnClickListener {
             findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToTreatmentPlanFragment())
         }
-
-        // --- Toggle ---
         binding.toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
-                // This will re-fetch data for the chart
                 fetchChartData(isWeekly = (checkedId == R.id.buttonWeekly))
             }
         }
@@ -85,7 +75,6 @@ class HomeDashboardFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                // This now returns the User object with the new 'latest' fields
                 val response = RetrofitClient.apiService.getMyProfile()
                 binding.progressBar.isVisible = false
 
@@ -118,12 +107,11 @@ class HomeDashboardFragment : Fragment() {
         val baseline = user.baseline?.baselineValue
         if (baseline != null) {
             binding.textBaselinePEFRValue.text = baseline.toString()
-            setupChartLimits(baseline) // Setup chart zones
+            setupChartLimits(baseline)
         } else {
             binding.textBaselinePEFRValue.text = "N/A"
             binding.lineChart.clear()
             binding.lineChart.invalidate()
-            // Prompt user to set baseline
             binding.textBaselinePEFRValue.setOnClickListener {
                 Toast.makeText(context, "Please set your baseline PEFR in your Profile.", Toast.LENGTH_LONG).show()
                 findNavController().navigate(HomeDashboardFragmentDirections.actionHomeDashboardFragmentToProfileFragment())
@@ -136,7 +124,10 @@ class HomeDashboardFragment : Fragment() {
             binding.textPEFRValue.text = latestPefr.pefrValue.toString()
             binding.textPEFRPercentage.text = "(${latestPefr.percentage?.toInt() ?: 0}%)"
             binding.textTrendIndicator.text = latestPefr.trend?.replaceFirstChar { it.uppercase() } ?: "Stable"
-            binding.textLastRecorded.text = "Last recorded: ${formatDate(latestPefr.recordedAt)}"
+
+            // --- USE HELPER FOR DATE ---
+            binding.textLastRecorded.text = "Last recorded: ${formatDateString(latestPefr.recordedAt)}"
+
             updateZoneUI(latestPefr.zone)
         } else {
             // No PEFR data yet
@@ -155,7 +146,6 @@ class HomeDashboardFragment : Fragment() {
             binding.ratingDyspnea.rating = latestSymptom.dyspneaRating?.toFloat() ?: 0f
             binding.ratingNightSymptoms.rating = latestSymptom.nightSymptomsRating?.toFloat() ?: 0f
         } else {
-            // No symptoms recorded
             binding.ratingWheeze.rating = 0f
             binding.ratingCough.rating = 0f
             binding.ratingDyspnea.rating = 0f
@@ -163,7 +153,7 @@ class HomeDashboardFragment : Fragment() {
         }
 
         // --- 4. Fetch Chart Data (Default to Weekly) ---
-        binding.toggleGroup.check(R.id.buttonWeekly) // Ensure weekly is checked
+        binding.toggleGroup.check(R.id.buttonWeekly)
         fetchChartData(isWeekly = true)
     }
 
@@ -172,7 +162,7 @@ class HomeDashboardFragment : Fragment() {
         val yellowZone = baselinePefr * 0.8f
 
         val axis = binding.lineChart.axisLeft
-        axis.removeAllLimitLines() // Clear old limits
+        axis.removeAllLimitLines()
         axis.addLimitLine(LimitLine(redZone, "Red Zone").apply {
             lineWidth = 2f
             lineColor = Color.RED
@@ -183,7 +173,7 @@ class HomeDashboardFragment : Fragment() {
             lineColor = Color.YELLOW
             textColor = Color.WHITE
         })
-        axis.axisMinimum = 0f // Start Y-axis at 0
+        axis.axisMinimum = 0f
         axis.setDrawGridLines(false)
         axis.textColor = Color.WHITE
 
@@ -199,16 +189,13 @@ class HomeDashboardFragment : Fragment() {
     private fun fetchChartData(isWeekly: Boolean) {
         lifecycleScope.launch {
             try {
-                // --- This now fetches REAL data ---
                 val response = RetrofitClient.apiService.getMyPefrRecords()
                 if (response.isSuccessful && response.body() != null) {
                     val records = response.body()!!
 
                     val entries = if (isWeekly) {
-                        // Get the last 7 records
                         records.takeLast(7).mapIndexed { i, record -> Entry(i.toFloat(), record.pefrValue.toFloat()) }
                     } else {
-                        // Get the last 30 records for "Monthly"
                         records.takeLast(30).mapIndexed { i, record -> Entry(i.toFloat(), record.pefrValue.toFloat()) }
                     }
 
@@ -217,7 +204,7 @@ class HomeDashboardFragment : Fragment() {
                         styleDataSet(dataSet)
                         binding.lineChart.data = LineData(dataSet)
                     } else {
-                        binding.lineChart.clear() // No data, clear the chart
+                        binding.lineChart.clear()
                     }
 
                 } else {
@@ -228,7 +215,7 @@ class HomeDashboardFragment : Fragment() {
                 Log.e("HomeDashboard", "Chart data exception: ${e.message}", e)
                 binding.lineChart.clear()
             } finally {
-                binding.lineChart.invalidate() // Refresh the chart
+                binding.lineChart.invalidate()
             }
         }
     }
@@ -243,11 +230,10 @@ class HomeDashboardFragment : Fragment() {
     }
 
     private fun updateZoneUI(zone: String) {
-        // You must add these colors to your colors.xml
         val green = ContextCompat.getColor(requireContext(), R.color.greenZone)
         val yellow = ContextCompat.getColor(requireContext(), R.color.yellowZone)
         val red = ContextCompat.getColor(requireContext(), R.color.redZone)
-        val grey = ContextCompat.getColor(requireContext(), R.color.cardLightBackgroundColor) // Use a default
+        val grey = ContextCompat.getColor(requireContext(), R.color.cardLightBackgroundColor)
 
         when (zone) {
             "Green" -> {
@@ -262,20 +248,34 @@ class HomeDashboardFragment : Fragment() {
                 binding.cardTodayZone.setCardBackgroundColor(red)
                 binding.textZoneGuidance.text = "Red Zone: Medical Emergency. Use reliever and seek help."
             }
-            else -> { // Unknown
+            else -> {
                 binding.cardTodayZone.setCardBackgroundColor(grey)
                 binding.textZoneGuidance.text = "Record a PEFR value to see your current zone."
             }
         }
     }
 
-    private fun formatDate(date: Date): String {
+    // Helper to format String dates from backend
+    private fun formatDateString(dateString: String?): String {
+        if (dateString == null) return "just now"
+
         return try {
-            // Format as "12 Nov, 10:30 AM"
-            val sdf = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault())
-            sdf.format(date)
+            // Matches the ISO format sent by Pydantic (Python backend)
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+
+            val outputFormat = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault())
+            outputFormat.format(date ?: Date())
         } catch (e: Exception) {
-            "just now"
+            try {
+                // Fallback for fraction seconds if present
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault())
+                val date = inputFormat.parse(dateString)
+                val outputFormat = SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault())
+                outputFormat.format(date ?: Date())
+            } catch (e2: Exception) {
+                "just now"
+            }
         }
     }
 

@@ -3,7 +3,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from typing import List, Optional
 import datetime
 
@@ -50,9 +50,10 @@ def get_pefr_trend(db: Session, owner_id: int, current_pefr: int):
     """
     Determines if the trend is improving, stable, or worsening.
     """
+    # Get the most recent record
     last_record = db.query(models.PEFRRecord).filter(
         models.PEFRRecord.owner_id == owner_id
-    ).order_by(models.PEFRRecord.recorded_at.desc()).first()
+    ).order_by(desc(models.PEFRRecord.recorded_at)).first()
     
     if not last_record:
         return "stable" # First record
@@ -140,29 +141,34 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 # --- Profile Management Endpoints ---
 
-# --- [START] THIS IS THE UPDATED ENDPOINT ---
+# *** THIS IS THE UPDATED ENDPOINT ***
 @app.get("/profile/me", response_model=schemas.User)
 def get_my_profile(
     current_user: models.User = Depends(auth.get_current_user),
-    db: Session = Depends(database.get_db) # Add the db session
+    db: Session = Depends(database.get_db)
 ):
-    # 1. Manually load the latest PEFR record
+    # 1. Manually load the Baseline (Fixes "N/A" issue)
+    db_baseline = db.query(models.BaselinePEFR).filter(
+        models.BaselinePEFR.owner_id == current_user.id
+    ).first()
+    current_user.baseline = db_baseline
+
+    # 2. Manually load the latest PEFR record
     latest_pefr = db.query(models.PEFRRecord).filter(
         models.PEFRRecord.owner_id == current_user.id
-    ).order_by(models.PEFRRecord.recorded_at.desc()).first()
+    ).order_by(desc(models.PEFRRecord.recorded_at)).first()
     
-    # 2. Manually load the latest Symptom record
+    # 3. Manually load the latest Symptom record
     latest_symptom = db.query(models.Symptom).filter(
         models.Symptom.owner_id == current_user.id
-    ).order_by(models.Symptom.recorded_at.desc()).first()
+    ).order_by(desc(models.Symptom.recorded_at)).first()
     
-    # 3. Attach them to the user object
+    # 4. Attach them to the user object
     current_user.latest_pefr_record = latest_pefr
     current_user.latest_symptom = latest_symptom
     
-    # 4. Return the user
     return current_user
-# --- [END] THIS IS THE UPDATED ENDPOINT ---
+# *** END OF UPDATE ***
 
 @app.put("/profile/me", response_model=schemas.User)
 def update_my_profile(
@@ -275,7 +281,7 @@ def record_symptom(
     return db_symptom
 
 
-# --- [START] NEW PATIENT-VIEW ENDPOINTS ---
+# --- PATIENT-VIEW ENDPOINTS ---
 
 @app.get("/pefr/records", response_model=List[schemas.PEFRRecord])
 def get_my_pefr_records(
@@ -285,7 +291,9 @@ def get_my_pefr_records(
     if current_user.role != models.UserRole.PATIENT:
         raise HTTPException(status_code=403, detail="Only patients can view this data.")
     
-    records = db.query(models.PEFRRecord).filter(models.PEFRRecord.owner_id == current_user.id).order_by(models.PEFRRecord.recorded_at.asc()).all()
+    records = db.query(models.PEFRRecord).filter(
+        models.PEFRRecord.owner_id == current_user.id
+    ).order_by(models.PEFRRecord.recorded_at.asc()).all()
     return records
 
 
@@ -297,13 +305,13 @@ def get_my_symptom_records(
     if current_user.role != models.UserRole.PATIENT:
         raise HTTPException(status_code=403, detail="Only patients can view this data.")
     
-    records = db.query(models.Symptom).filter(models.Symptom.owner_id == current_user.id).order_by(models.Symptom.recorded_at.asc()).all()
+    records = db.query(models.Symptom).filter(
+        models.Symptom.owner_id == current_user.id
+    ).order_by(models.Symptom.recorded_at.asc()).all()
     return records
 
-# --- [END] NEW PATIENT-VIEW ENDPOINTS ---
 
-
-# --- [START] NEW ENDPOINT TO LINK PATIENT TO DOCTOR ---
+# --- DOCTOR LINKING ---
 
 @app.post("/patient/link-doctor", response_model=schemas.DoctorPatientLink)
 def link_patient_to_doctor(
@@ -343,10 +351,8 @@ def link_patient_to_doctor(
 
     return db_link
 
-# --- [END] NEW ENDPOINT TO LINK PATIENT TO DOCTOR ---
 
-
-# --- NEW: Medication Endpoints ---
+# --- MEDICATION ENDPOINTS ---
 
 @app.post("/medications", response_model=schemas.Medication)
 def create_medication(
@@ -367,7 +373,7 @@ def get_my_medications(
 ):
     return db.query(models.Medication).filter(models.Medication.owner_id == current_user.id).all()
 
-# --- NEW: Emergency Contact Endpoints ---
+# --- EMERGENCY CONTACT ENDPOINTS ---
 
 @app.post("/contacts", response_model=schemas.EmergencyContact)
 def create_emergency_contact(
@@ -388,7 +394,7 @@ def get_my_emergency_contacts(
 ):
     return db.query(models.EmergencyContact).filter(models.EmergencyContact.owner_id == current_user.id).all()
 
-# --- NEW: Reminder Endpoints ---
+# --- REMINDER ENDPOINTS ---
 
 @app.post("/reminders", response_model=schemas.Reminder)
 def create_reminder(
@@ -409,7 +415,7 @@ def get_my_reminders(
 ):
     return db.query(models.Reminder).filter(models.Reminder.owner_id == current_user.id).all()
 
-# --- NEW: Doctor Dashboard Endpoint ---
+# --- DOCTOR DASHBOARD ---
 
 @app.get("/doctor/patients", response_model=List[schemas.User])
 def get_doctor_patients(
@@ -438,7 +444,7 @@ def get_doctor_patients(
     return query.all()
 
 
-# --- [START] NEW DOCTOR ENDPOINTS ---
+# --- DOCTOR SPECIFIC ENDPOINTS ---
 
 def get_patient_by_id(db: Session, patient_id: int):
     """Helper to get a patient by ID"""
@@ -475,7 +481,6 @@ def get_patient_symptom_records(
         
     return db.query(models.Symptom).filter(models.Symptom.owner_id == patient_id).all()
 
-# --- [START] NEW DOCTOR ENDPOINT FOR PRESCRIBING ---
 @app.post("/doctor/patient/{patient_id}/medication", response_model=schemas.Medication)
 def prescribe_medication(
     patient_id: int,
@@ -501,4 +506,3 @@ def prescribe_medication(
     
     db.refresh(db_medication)
     return db_medication
-# --- [END] NEW DOCTOR ENDPOINT FOR PRESCRIBING ---

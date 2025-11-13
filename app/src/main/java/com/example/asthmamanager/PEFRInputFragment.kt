@@ -1,6 +1,7 @@
 package com.example.asthmamanager
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,19 +58,23 @@ class PEFRInputFragment : Fragment() {
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "PEFR recorded successfully", Toast.LENGTH_SHORT).show()
 
-                        // --- THIS IS THE CHANGE ---
-                        // Instead of popBackStack(), we navigate to the symptom tracker
-                        // This ID comes from your nav_graph.xml
-                        findNavController().navigate(R.id.action_homeDashboardFragment_to_symptomTrackerFragment)
-                        // --- END OF CHANGE ---
+                        // --- THIS IS THE FIX ---
+                        // We now use the action that starts from THIS fragment
+                        findNavController().navigate(R.id.action_PEFRInputFragment_to_symptomTrackerFragment)
+                        // --- END OF FIX ---
 
                     } else {
+                        // This block will catch 401, 500, etc.
+                        val errorMsg = response.errorBody()?.string() ?: "Unknown error"
+                        Log.e("PEFRInputFragment", "API Error: ${response.code()} - $errorMsg")
                         Toast.makeText(requireContext(), "Failed to record PEFR. Please try again.", Toast.LENGTH_LONG).show()
                         binding.buttonSubmit.isEnabled = true // Re-enable on error
                         binding.buttonSubmit.text = "Submit" // Reset text on error
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_LONG).show()
+                    // This block catches navigation errors or JSON parsing errors
+                    Log.e("PEFRInputFragment", "Navigation/Parsing Error: ${e.message}", e)
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     binding.buttonSubmit.isEnabled = true // Re-enable on error
                     binding.buttonSubmit.text = "Submit" // Reset text on error
                 }

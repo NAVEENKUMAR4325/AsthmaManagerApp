@@ -191,7 +191,13 @@
         android:id="@+id/PEFRInputFragment"
         android:name="com.example.asthmamanager.PEFRInputFragment"
         android:label="PEFR Input"
-        tools:layout="@layout/fragment_pefr_input" />
+        tools:layout="@layout/fragment_pefr_input" >
+        <!-- THIS IS THE NEW ACTION YOU MUST ADD -->
+        <action
+            android:id="@+id/action_PEFRInputFragment_to_symptomTrackerFragment"
+            app:destination="@id/symptomTrackerFragment"
+            app:popUpTo="@id/homeDashboardFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/graphFragment"

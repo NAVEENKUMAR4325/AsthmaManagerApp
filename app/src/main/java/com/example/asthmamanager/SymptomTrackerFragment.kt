@@ -14,7 +14,12 @@ import com.example.asthmamanager.databinding.FragmentSymptomTrackerBinding
 import com.example.asthmamanager.network.RetrofitClient
 import com.example.asthmamanager.network.SymptomCreate
 import kotlinx.coroutines.launch
+// --- ADD THESE IMPORTS ---
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+// --- END IMPORTS ---
 
 class SymptomTrackerFragment : Fragment() {
 
@@ -60,6 +65,14 @@ class SymptomTrackerFragment : Fragment() {
             else -> "Severe"
         }
 
+        // --- THIS IS THE FIX ---
+        // Create an ISO 8601 formatter that Python/FastAPI understands
+        // "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+        isoFormatter.timeZone = TimeZone.getTimeZone("UTC")
+        val nowAsISO = isoFormatter.format(Date())
+        // --- END FIX ---
+
         // Create the request object
         val symptomRequest = SymptomCreate(
             wheezeRating = wheezeRating,
@@ -69,7 +82,11 @@ class SymptomTrackerFragment : Fragment() {
             dustExposure = dustExposure,
             smokeExposure = smokeExposure,
             severity = severity, // Set a calculated severity
-            onsetAt = Date(), // Use current time
+
+            // --- THIS IS THE FIX ---
+            onsetAt = nowAsISO, // Use the formatted string instead of Date()
+            // --- END FIX ---
+
             duration = null, // Not captured in this form
             suspectedTrigger = trigger.ifBlank { null } // Set trigger if not blank
         )
